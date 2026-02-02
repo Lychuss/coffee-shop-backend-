@@ -25,3 +25,7 @@ export const display_product = async (req: Request, res: Response) => {
         })
     }
 }
+
+export const search_product = async (req: Request, res: Response) => {
+
+}
