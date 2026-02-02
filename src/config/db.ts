@@ -8,8 +8,9 @@ export const pool = new Pool({
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     host: process.env.DATABASE_HOST,
-    port: process.env.DATABASE_PORT,
+    port: process.env.DATABASE_PORT
+        ? Number(process.env.DATABASE_PORT)
+        : undefined,
     database: process.env.DATABASE_NAME,
     ssl: false
 })
-
