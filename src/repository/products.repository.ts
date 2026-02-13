@@ -13,3 +13,9 @@ export const search_product = async (name: string) => {
     );
 }
 
+export const catergory_get_products = async (category: string) => {
+    return pool.query(
+        'SELECT * FROM PRODUCTS WHERE category = $1',
+        [category]
+    );
+}

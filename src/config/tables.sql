@@ -3,7 +3,8 @@ CREATE TABLE products (
 	image TEXT,
 	rating DECIMAL(1,1),
 	volume INTEGER,
-	price DECIMAL(2, 2)
+	price DECIMAL(2, 2),
+	category VARCHAR(225)
 )
 
 CREATE TABLE customer_reviews(

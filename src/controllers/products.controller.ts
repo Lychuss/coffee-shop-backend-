@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import type { Products } from "../models/products.interface.ts";
-import { display_all_product, search_product } from "../repository/products.repository.ts"
+import { display_all_product, search_product, catergory_get_products } from "../repository/products.repository.ts"
 
 export const display_product = async (req: Request, res: Response) => {
     try {
@@ -48,5 +48,19 @@ export const search_products = async (req: Request, res: Response) => {
             message: "There is an error in the server!",
             sucess: false
         })
+    }
+}
+
+export const category_product = async (req: Request, res: Response) => {
+    const { category } = req.params;
+    
+    if(!category || typeof category !== "string") return res.status(404).json({ message: 'Params for catergory has no value!', success: false });
+    try {
+        const data = await catergory_get_products(category);
+        const rows = data.rows;
+        
+        return res.status(200).json({message: rows, success: true});
+    } catch(err){
+        return res.status(500).json({ message: 'There is an error in the server!', success: false });
     }
 }
