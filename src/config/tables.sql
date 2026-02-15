@@ -7,6 +7,10 @@ CREATE TABLE products (
 	category VARCHAR(225)
 )
 
+INSERT INTO products (
+	
+)
+
 CREATE TABLE customer_reviews(
 	id BIGSERIAL PRIMARY KEY,
 	name VARCHAR(225),
