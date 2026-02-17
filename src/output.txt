@@ -1,0 +1,240 @@
+ 
+============================== 
+FILE: C:\coffee-shop-backend\Backend\src\app.ts 
+============================== 
+import express from "express";
+import type { Request, Response } from "express";
+import cors from "cors";
+import productRouter from "./routes/products.routes.ts";
+
+const app = express();
+
+app.use(cors());
+app.use((req, res, next) => {
+  if (["POST", "PUT", "PATCH"].includes(req.method)) {
+    express.json()(req, res, next);
+  } else {
+    next();
+  }
+});
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/health", (req: Request, res: Response) => {
+    res.json({ status: "Server is running!"});
+})
+
+app.use("/yespark", productRouter);
+
+app.listen(5000, () => {
+    console.log("Server 5000 is listening...");
+}) 
+============================== 
+FILE: C:\coffee-shop-backend\Backend\src\config\db.ts 
+============================== 
+import pkg from 'pg';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const { Pool } = pkg;
+
+export const pool = new Pool({
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT
+        ? Number(process.env.DATABASE_PORT)
+        : undefined,
+    database: process.env.DATABASE_NAME,
+    ssl: false
+})
+ 
+============================== 
+FILE: C:\coffee-shop-backend\Backend\src\controllers\products.controller.ts 
+============================== 
+import type { Request, Response } from "express";
+import type { Products } from "../models/products.interface.ts";
+import { display_all_product, search_product, catergory_get_products } from "../repository/products.repository.ts"
+
+export const display_product = async (req: Request, res: Response) => {
+    try {
+        const data = await display_all_product();
+        const products: Products[] = data.rows;
+
+        if(products.length === 0) return res.status(404).json({ 
+            message: "Error the products has no value",
+            success: false
+        });
+
+        return res.status(200).json({
+            message: "Here all the products!",
+            data: products,
+            success: true
+        })
+    } catch(err) {
+        console.log(err);
+        return res.status(500).json({
+            message: "There are errors in the server!",
+            success: false
+        })
+    }
+}
+
+export const search_products = async (req: Request, res: Response) => {
+    const { name } = req.params;
+    try {
+        if(typeof name !== "string"){
+            return res.status(404).json({
+                message: "The parameter must be a string",
+                success: false
+            });
+        }
+
+        const call = await search_product(name);
+        const data = call.rows;
+
+        return res.status(200).json({
+            message: data,
+            success: true
+        })
+    } catch(err){
+        return res.status(500).json({
+            message: "There is an error in the server!",
+            sucess: false
+        })
+    }
+}
+
+export const category_product = async (req: Request, res: Response) => {
+    const { category } = req.params;
+    
+    if(!category || typeof category !== "string") return res.status(404).json({ message: 'Params for catergory has no value!', success: false });
+    try {
+        const data = await catergory_get_products(category);
+        const rows = data.rows;
+        
+        return res.status(200).json({message: rows, success: true});
+    } catch(err){
+        return res.status(500).json({ message: 'There is an error in the server!', success: false });
+    }
+} 
+============================== 
+FILE: C:\coffee-shop-backend\Backend\src\middlewares\authorization.middlewares.ts 
+============================== 
+import type { NextFunction } from "express";
+import type { Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import type { User } from "../models/user.interface.ts";
+
+export const createToken = (): string => {
+    const payLoad = {iat: Math.floor(Date.now()/ 1000)};
+    const JWT_SECRET = process.env.SECRET_KEY;
+
+    if(!JWT_SECRET) throw new Error("JWT_SECRET must have a value!");
+
+    const token = jwt.sign(payLoad, JWT_SECRET, {expiresIn: '1h'});
+
+    return token;
+}
+
+export const authenticated = (req: Request, res: Response, next: NextFunction) => {
+    const bearerHeader = req.get("authorization");
+    const token = bearerHeader && bearerHeader.split(' ')[1];
+    const JWT_SECRET = process.env.SECRET_KEY;
+
+    if(!JWT_SECRET) throw new Error("JWT_SECRET must have a value!");
+
+    if(!token) return res.status(401).json({message: 'You must have a token!'});
+
+    try {
+        const decode = jwt.verify(token, JWT_SECRET) as User;
+        const currentTime = Math.floor(Date.now() / 1000);
+        const timeExpiration = decode.exp! - currentTime;
+
+        if(timeExpiration < 360){
+            const newToken = createToken();
+            res.setHeader('x-refresh-token', newToken);
+        }
+
+        next();
+    } catch(err) {
+        return res.status(401).json({
+            message: "You have an invalid token!",
+            success: false
+        });
+    }
+}
+ 
+============================== 
+FILE: C:\coffee-shop-backend\Backend\src\models\products.interface.ts 
+============================== 
+export interface Products {
+    image: string,
+    rating: number,
+    volume: number,
+    price: number
+}
+
+interface Customer {
+
+}
+
+
+/*
+* 	name VARCHAR(225) PRIMARY KEY,
+	image TEXT,
+	rating DECIMAL(1,1),
+	volume INTEGER,
+	price DECIMAL(2, 2)
+
+    id BIGSERIAL PRIMARY KEY,
+	name VARCHAR(225),
+	review VARCHAR(225),
+	rating DECIMAL(1,1)	
+    
+*/ 
+============================== 
+FILE: C:\coffee-shop-backend\Backend\src\models\user.interface.ts 
+============================== 
+import type { JwtPayload } from "jsonwebtoken"
+export interface User extends JwtPayload {
+    iat: number
+} 
+============================== 
+FILE: C:\coffee-shop-backend\Backend\src\repository\products.repository.ts 
+============================== 
+import { pool } from "../config/db.ts";
+
+export const display_all_product = async () => {
+    return pool.query(
+        'SELECT * FROM products'
+    );
+}
+
+export const search_product = async (name: string) => {
+    return pool.query(
+        'SELECT * FROM products WHERE name = $1',
+        [name]
+    );
+}
+
+export const catergory_get_products = async (category: string) => {
+    return pool.query(
+        'SELECT * FROM PRODUCTS WHERE category = $1',
+        [category]
+    );
+}
+ 
+============================== 
+FILE: C:\coffee-shop-backend\Backend\src\routes\products.routes.ts 
+============================== 
+import express from "express";
+import { authenticated } from "../middlewares/authorization.middlewares.ts";
+import { category_product, search_products, display_product } from "../controllers/products.controller.ts";
+
+const productRouter = express.Router();
+
+productRouter.get("/coffee/product/:category", category_product);
+productRouter.get("/coffee/search-product/:name", search_products);
+productRouter.get("/coffee/all-products", display_product);
+
+export default productRouter;
