@@ -15,9 +15,8 @@ export const createToken = (userId: string): string => {
 }
 
 export const authenticated = (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.body;
-    const bearerHeader = req.get("authorization");
-    const token = bearerHeader && bearerHeader.split(' ')[1];
+    const userId: string = req.body;
+    const token = req.cookies?.token;
     const JWT_SECRET = process.env.SECRET_KEY;
 
     if(!JWT_SECRET) throw new Error("JWT_SECRET must have a value!");

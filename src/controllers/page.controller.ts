@@ -5,7 +5,6 @@ import { createToken, verify_token } from "../middlewares/authorization.middlewa
 
 export const guest = async (req: Request, res: Response) => {
     const userId = uuidv4();
-
     try {
         const token = req.cookies?.token; 
 
@@ -26,7 +25,7 @@ export const guest = async (req: Request, res: Response) => {
         sameSite: 'lax',
         });
 
-        return res.status(200).json({ message: 'Welcome user!', success: false });
+        return res.status(200).json({ message: 'Welcome user!', success: false, userId: userId });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: 'Internal server error', success: false });
