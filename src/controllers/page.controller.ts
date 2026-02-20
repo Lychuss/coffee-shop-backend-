@@ -5,29 +5,30 @@ import { createToken, verify_token } from "../middlewares/authorization.middlewa
 
 export const guest = async (req: Request, res: Response) => {
     const userId = uuidv4();
-    const {token} = req.body;
 
-    if(token){
-        if(verify_token(token)) {
-            return res.status(200).json({ message: 'You have a valid token!', success: true});
+    try {
+        const token = req.cookies?.token; 
+
+        if (token) {
+            if (verify_token(token)) {
+                return res.status(200).json({ message: 'You have a valid token!', success: true });
+            }
         }
 
-        try {
-            const token = createToken(userId);
 
-            res.cookie('token', token, {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'strict'
-            });
+        const newToken = createToken(userId);
 
-            return res.status(200).json({ message: 'Welcome user!', success: false });
+        await insert_guest(userId);
 
-        } catch(err){
-            console.log(err);
-            return res.status(500).json({ message: 'There is an error in the internal server!', success: false });
-        }
+        res.cookie('token', newToken, {
+        httpOnly: true,
+        secure: false, 
+        sameSite: 'lax',
+        });
 
+        return res.status(200).json({ message: 'Welcome user!', success: false });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: 'Internal server error', success: false });
     }
-
-}
+};

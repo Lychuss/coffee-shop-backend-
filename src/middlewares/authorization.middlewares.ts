@@ -44,12 +44,16 @@ export const authenticated = (req: Request, res: Response, next: NextFunction) =
 }
 
 export const verify_token = (token: string) => {
-    if(token){
-        try{ 
-            if(jwt.verify(token, process.env.SECRET_KEY!)) return true;
-        } catch(err){
-            return false
-        }   
+    try {
+        if(token){
+            try{ 
+                if(jwt.verify(token, process.env.SECRET_KEY!)) return true;
+            } catch(err){
+                return false
+            }   
+        }
+        return false;
+    } catch(err){
+        return false
     }
-    return false;
 }
