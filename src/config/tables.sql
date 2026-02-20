@@ -37,3 +37,13 @@ CREATE TABLE orders_receipt (
 	address VARCHAR(225),
 	contact INT
 )
+
+1. BANGSILOG, /images/bangsilog-menu.png, 3.4, null, 95, breakfast
+1. HUNGSILOG, /images/hungsilog-menu.png, 4.5, null, 95, breakfast
+1. LONGSILOG, /images/longsilog-menu.png, 2.4, null, 85, breakfast
+1. TOSILOG, /images/tosilog-menu.png, 4.4, null, 85, breakfast
+1. CLASSIC BURGER, /images/classic-burger-menu.png, 4.2, null, 75, snacks
+1. FRENCH FRIES, /images/french-fries-menu.png, 4.5, null, 50, snacks
+1. HAM CARBONARA, /images/ham-carbonara-menu.png, 3.8, null, 65, snacks
+1. HUNGARIAN SANDWICH, /images/hungarian-sandiwch-menu.png, 4.6, null, 85, snacks
+1. PANCAKE 2PC, /images/classic-burger-menu.png, 4.2, null, 65, snacks
