@@ -3,8 +3,8 @@ import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import type { User } from "../models/user.interface.ts";
 
-export const createToken = (userId: string): string => {
-    const payLoad = {userId: userId, role: 'guest'};
+export const createToken = (userId: string, cartId: string): string => {
+    const payLoad = {userId: userId, role: 'guest', cartId: cartId};
     const JWT_SECRET = process.env.SECRET_KEY;
 
     if(!JWT_SECRET) throw new Error("JWT_SECRET must have a value!");
@@ -15,7 +15,6 @@ export const createToken = (userId: string): string => {
 }
 
 export const authenticated = (req: Request, res: Response, next: NextFunction) => {
-    const userId: string = req.body;
     const token = req.cookies?.token;
     const JWT_SECRET = process.env.SECRET_KEY;
 
@@ -25,14 +24,6 @@ export const authenticated = (req: Request, res: Response, next: NextFunction) =
 
     try {
         const decode = jwt.verify(token, JWT_SECRET) as User;
-        const currentTime = Math.floor(Date.now() / 1000);
-        const timeExpiration = decode.exp! - currentTime;
-
-        if(timeExpiration < 360){
-            const newToken = createToken(userId);
-            res.setHeader('x-refresh-token', newToken);
-        }
-
         next();
     } catch(err) {
         return res.status(401).json({

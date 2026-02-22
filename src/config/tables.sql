@@ -2,9 +2,14 @@ CREATE TABLE products (
 	name VARCHAR(225) PRIMARY KEY,
 	image TEXT,
 	rating DECIMAL(1,1),
-	volume INTEGER,
 	price DECIMAL(2, 2),
 	category VARCHAR(225)
+)
+
+CREATE TABLE users (
+	users_id UUID PRIMARY KEY,
+	role VARCHAR(50) DEFAULT 'guest',
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 )
 
 CREATE TABLE customer_reviews(
@@ -36,6 +41,22 @@ CREATE TABLE orders_receipt (
 	total_price DECIMAL(10, 2),
 	address VARCHAR(225),
 	contact INT
+)
+
+CREATE TABLE carts (
+	id UUID PRIMARY KEY,
+	user_id UUID REFERENCES users(id),
+	status VARCHAR(50) DEFAULT 'active',
+	time_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	time_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+CREATE TABLE cart_items (
+	id BIGSERIAL PRIMARY KEY,
+	cart_id UUID REFERENCES carts(id) ON DELETE CASCADE,
+	product_name VARCHAR(225) REFERENCES products(name),
+	size INT,
+	quantity INT
 )
 
 1. BANGSILOG, /images/bangsilog-menu.png, 3.4, null, 95, breakfast

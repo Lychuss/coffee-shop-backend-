@@ -1,4 +1,6 @@
 import type { JwtPayload } from "jsonwebtoken"
 export interface User extends JwtPayload {
-    iat: number
+    iat: number,
+    cartId: string,
+    userId: string
 }
