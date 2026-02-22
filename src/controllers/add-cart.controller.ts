@@ -1,23 +1,41 @@
 import type { Request, Response } from "express";
 import type { CartItem } from "../models/cart.interface.ts";
 import { returnPayload } from "../services/token.service.ts";
-import { add_cart_items } from "../repository/addcart.repository.ts";
+import { add_cart_items, get_total_items } from "../repository/addcart.repository.ts";
 import { v4 as uuidv4 } from "uuid";
+import type { User } from "../models/user.interface.ts";
+import { stat } from "node:fs";
 
 export const add_cart = async (req: Request, res: Response) => {
     const cart_items_id = uuidv4();
     const token: string  = req.cookies.token;
     const cartItem: CartItem = req.body;
-    const cartId: string | null = returnPayload(token);
+    const payLoad: User | null = returnPayload(token);
 
-    if(cartId === null) return res.status(404).json({ message: 'Invalid cart id no value!', success: false});
+    if(payLoad === null) return res.status(404).json({ message: 'Invalid cart id no value!', success: false});
 
     try {
-        const add_cart = await add_cart_items(cart_items_id, cartId, cartItem);
+        const add_cart = await add_cart_items(cart_items_id, payLoad.cartId, cartItem);
 
         return res.status(200).json({ message: 'Added cart sucessfully', success: true });
     } catch(err){
         console.log(err);
         return res.status(500).json({ message: 'Internal Server Error!', success: false });
+    }
+}
+
+export const get_items = async (req: Request, res: Response) => {
+    const token = req.cookies.token;
+    const payLoad: User | null = returnPayload(token);
+
+    if(payLoad === null) return res.status(401).json({ message: 'Invalid token!', success: false });
+
+    try {
+        const query = await get_total_items(payLoad.userId);
+        const data = query.rows[0];
+        return res.status(200).json({ message: 'Successfully send the total items', success: true, data: data.total_items });
+    } catch(err){
+        console.log(err);
+        return res.status(500).json({ message: 'Internal Server Error', success: false });
     }
 }
