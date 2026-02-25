@@ -15,3 +15,13 @@ export const get_total_items = async (userId: string) => {
         WHERE carts.user_id = $1`, [userId]
     );
 }
+
+export const display_products_cart = async (userId: string) => {
+    return pool.query(
+        `SELECT products.name, products.image, products.rating, products.price, products.category
+        FROM products
+        INNER JOIN cart_items ON products.name = cart_items.product_name
+        INNER JOIN carts ON cart_items.carts_id = carts.carts_id
+        WHERE carts.user_id = $1`, [userId]
+    );
+}
