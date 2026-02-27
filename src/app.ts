@@ -9,7 +9,10 @@ import cartRouter from "./routes/addcart.routes";
 const app = express();
 
 app.use(cors({
-    origin: ["https://yes-park-cafe-frontend.vercel.app", "http://localhost:3000"],
+    origin: [
+        "https://yes-park-cafe-frontend-ce0m51f3b.vercel.app",
+        "http://localhost:3000"
+    ],
     credentials: true
 }));
 
