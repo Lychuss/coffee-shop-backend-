@@ -5,7 +5,7 @@ import { authenticated } from '../middlewares/authorization.middlewares';
 const cartRouter = express.Router();
 
 cartRouter.post('/product/add-cart', authenticated, add_cart);
-cartRouter.get('/prorduct/all-user-cart', authenticated, display_cart);
+cartRouter.get('/product/all-user-cart', authenticated, display_cart);
 
 export default cartRouter;
 
