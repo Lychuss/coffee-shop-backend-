@@ -1,5 +1,5 @@
 import express from "express";
-import { guest } from "../controllers/page.controller.ts";
+import { guest } from "../controllers/page.controller";
 
 const pageRouter = express.Router();
 

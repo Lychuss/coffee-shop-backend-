@@ -1,7 +1,7 @@
 import type { NextFunction } from "express";
 import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import type { User } from "../models/user.interface.ts";
+import type { User } from "../models/user.interface";
 
 export const createToken = (userId: string, cartId: string): string => {
     const payLoad = {userId: userId, role: 'guest', cartId: cartId};

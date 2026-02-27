@@ -1,4 +1,4 @@
-import { pool } from "../config/db.ts";
+import { pool } from "../config/db";
 
 export const display_all_product = async () => {
     return pool.query(

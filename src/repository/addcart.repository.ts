@@ -1,5 +1,5 @@
-import { pool } from "../config/db.ts";
-import type { CartItem } from "../models/cart.interface.ts";
+import { pool } from "../config/db";
+import type { CartItem } from "../models/cart.interface";
 
 export const add_cart_items = async (cartItemId: string, cartId: string, cart: CartItem) => {
     return pool.query(

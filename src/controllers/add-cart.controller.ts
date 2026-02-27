@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
-import type { CartItem } from "../models/cart.interface.ts";
-import { returnPayload } from "../services/token.service.ts";
-import { add_cart_items, get_total_items, display_products_cart } from "../repository/addcart.repository.ts";
+import type { CartItem } from "../models/cart.interface";
+import { returnPayload } from "../services/token.service";
+import { add_cart_items, get_total_items, display_products_cart } from "../repository/addcart.repository";
 import { v4 as uuidv4 } from "uuid";
-import type { User } from "../models/user.interface.ts";
+import type { User } from "../models/user.interface";
 
 export const add_cart = async (req: Request, res: Response) => {
     const cart_items_id = uuidv4();

@@ -1,9 +1,10 @@
 import type { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
-import { insert_guest, create_cart, get_cart_id } from "../repository/guest.repository.ts";
-import { createToken, verify_token } from "../middlewares/authorization.middlewares.ts";
+import { insert_guest, create_cart, get_cart_id } from "../repository/guest.repository";
+import { createToken, verify_token } from "../middlewares/authorization.middlewares";
 
 export const guest = async (req: Request, res: Response) => {
+    console.log("DATABASE_URL =", process.env.DATABASE_URL);
     const userId = uuidv4();
     const cartId = uuidv4();
 
@@ -22,9 +23,9 @@ export const guest = async (req: Request, res: Response) => {
         const newToken = createToken(userId, cartId);
 
         res.cookie('token', newToken, {
-        httpOnly: true,
-        secure: false, 
-        sameSite: 'lax',
+            httpOnly: true,
+            secure: false, 
+            sameSite: 'lax',
         });
 
         return res.status(200).json({ message: 'Welcome user!', success: false, userId: userId });

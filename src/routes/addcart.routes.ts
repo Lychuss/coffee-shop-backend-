@@ -1,6 +1,6 @@
 import express from 'express';
-import { add_cart, display_cart } from '../controllers/add-cart.controller.ts';
-import { authenticated } from '../middlewares/authorization.middlewares.ts';
+import { add_cart, display_cart } from '../controllers/add-cart.controller';
+import { authenticated } from '../middlewares/authorization.middlewares';
 
 const cartRouter = express.Router();
 

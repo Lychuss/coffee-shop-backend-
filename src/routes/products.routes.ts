@@ -1,6 +1,6 @@
 import express from "express";
-import { authenticated } from "../middlewares/authorization.middlewares.ts";
-import { category_product, search_products} from "../controllers/products.controller.ts";
+import { authenticated } from "../middlewares/authorization.middlewares";
+import { category_product, search_products} from "../controllers/products.controller";
 
 const productRouter = express.Router();
 
