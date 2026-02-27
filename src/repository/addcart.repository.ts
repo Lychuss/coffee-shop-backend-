@@ -25,3 +25,13 @@ export const display_products_cart = async (userId: string) => {
         WHERE carts.user_id = $1`, [userId]
     );
 }
+
+export const display_product_bills = async (userId: string) => {
+    return pool.query(
+        `SELECT products.price, products.name, products.image, cart_items.quantity 
+        FROM products JOIN cart_items ON products.name = cart_items.product_name
+        JOIN carts ON cart_items.carts_id = carts.carts_id
+        JOIN users ON carts.user_id = users.users_id
+        WHERE carts.user_id = $1`, [userId]
+    );
+}
