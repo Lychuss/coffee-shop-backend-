@@ -19,7 +19,13 @@ app.use(cors({
 }));
 
 app.use(cookieParser());
-app.use(express.json());
+app.use((req, res, next) => {
+  if (["POST", "PUT", "PATCH"].includes(req.method)) {
+    express.json()(req, res, next);
+  } else {
+    next();
+  }
+});
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/health", (req: Request, res: Response) => {
