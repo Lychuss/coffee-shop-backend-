@@ -21,8 +21,8 @@ const guest = async (req, res) => {
         const newToken = (0, authorization_middlewares_1.createToken)(userId, cartId);
         res.cookie('token', newToken, {
             httpOnly: true,
-            secure: false,
-            sameSite: 'lax',
+            secure: true,
+            sameSite: "none"
         });
         return res.status(200).json({ message: 'Welcome user!', success: false, userId: userId });
     }

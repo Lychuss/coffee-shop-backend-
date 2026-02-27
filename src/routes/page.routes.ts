@@ -3,6 +3,6 @@ import { guest } from "../controllers/page.controller";
 
 const pageRouter = express.Router();
 
-pageRouter.post('/guest', guest);
+pageRouter.get('/guest', guest);
 
 export default pageRouter;

@@ -35,18 +35,9 @@ const authenticated = (req, res, next) => {
 exports.authenticated = authenticated;
 const verify_token = (token) => {
     try {
-        if (token) {
-            try {
-                if (jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY))
-                    return true;
-            }
-            catch (err) {
-                return false;
-            }
-        }
-        return false;
+        return jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
     }
-    catch (err) {
+    catch {
         return false;
     }
 };
