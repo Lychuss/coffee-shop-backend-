@@ -14,7 +14,19 @@ const allowedOrigins = [
 ].filter(Boolean) as string[];
 
 app.use(cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+        const allowedOrigins = [
+            process.env.FRONTEND_URL,
+            "https://yes-park-cafe-frontend.vercel.app",
+            "http://localhost:3000"
+        ];
+
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true
 }));
 
