@@ -52,11 +52,12 @@ CREATE TABLE carts (
 )
 
 CREATE TABLE cart_items (
-	id BIGSERIAL PRIMARY KEY,
-	cart_id UUID REFERENCES carts(id) ON DELETE CASCADE,
+	cart_items_id UUID PRIMARY KEY,
+	carts_id UUID REFERENCES carts(carts_id) ON DELETE CASCADE,
 	product_name VARCHAR(225) REFERENCES products(name),
-	size INT,
-	quantity INT
+  	size INT,
+	quantity INT,
+  	created_at TIMESTAMP DEFAULT current_timestamp
 )
 
 1. BANGSILOG, /images/bangsilog-menu.png, 3.4, null, 95, breakfast
