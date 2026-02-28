@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import type { User } from '../models/user.interface';
+import type { User } from '../interface/user.interface';
 
 export const returnPayload = (token: string): User | null => {
     try {

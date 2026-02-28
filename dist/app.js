@@ -10,8 +10,12 @@ const products_routes_1 = __importDefault(require("./routes/products.routes"));
 const page_routes_1 = __importDefault(require("./routes/page.routes"));
 const addcart_routes_1 = __importDefault(require("./routes/addcart.routes"));
 const app = (0, express_1.default)();
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    "http://localhost:3000"
+].filter(Boolean);
 app.use((0, cors_1.default)({
-    origin: "https://yes-park-cafe-frontend.vercel.app",
+    origin: allowedOrigins,
     credentials: true
 }));
 app.use(express_1.default.json());
