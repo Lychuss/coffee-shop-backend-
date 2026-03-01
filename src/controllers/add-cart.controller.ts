@@ -15,6 +15,7 @@ export const add_cart = async (req: Request, res: Response) => {
     const payLoad: User | null = returnPayload(token);
     console.log(cartItem);
 
+    if(cartItem.quantity === 0) return res.status(404).json({ message: 'You must have a quantity not less than 0!', success: false }); 
     if(payLoad === null) return res.status(404).json({ message: 'Invalid cart id no value!', success: false});
 
     try {
