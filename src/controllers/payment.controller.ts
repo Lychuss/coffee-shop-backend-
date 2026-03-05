@@ -7,7 +7,7 @@ import { returnPayload } from "../services/token.service";
 import type { User } from "../interface/user.interface";
 
 export const createPayment = async (req: Request, res: Response) => {
-    const { payment, total_amount} = req.body as Order;
+    const { payment, total_amount, payment_method} = req.body as Order;
     const token = req.cookies.token;
     const payLoad: User | null = returnPayload(token);
 
@@ -17,13 +17,12 @@ export const createPayment = async (req: Request, res: Response) => {
     try {
         const get_id = await get_cart_id(payLoad.userId);
         const cart_id = get_id.rows[0].carts_id;
-
         const set_order = await add_order(cart_id, payment, total_amount);
         const set_order_data = set_order.rows[0];
 
-        const invoice = await createInvoice(set_order_data.orders_id, total_amount);
+        const invoice = await createInvoice(set_order_data.orders_id, total_amount, payment_method);
 
-        const set_xendit = await update_xendit(invoice.id, set_order_data.orders_id);
+        await update_xendit(invoice.id, set_order_data.orders_id);
 
         return res.json({ invoice_url: invoice.invoice_url });
 
