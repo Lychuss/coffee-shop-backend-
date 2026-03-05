@@ -5,8 +5,10 @@ import { add_order, update_xendit, update_status } from "../repository/payment.r
 import { get_cart_id } from "../repository/guest.repository";
 import { returnPayload } from "../services/token.service";
 import type { User } from "../interface/user.interface";
+import { v4 as uuidv4 } from "uuid";
 
 export const createPayment = async (req: Request, res: Response) => {
+    const uuid = uuidv4();
     const { payment, total_amount, payment_method} = req.body as Order;
     const token = req.cookies.token;
     const payLoad: User | null = returnPayload(token);
@@ -17,14 +19,14 @@ export const createPayment = async (req: Request, res: Response) => {
     try {
         const get_id = await get_cart_id(payLoad.userId);
         const cart_id = get_id.rows[0].carts_id;
-        const set_order = await add_order(cart_id, payment, total_amount);
+        const set_order = await add_order(uuid, cart_id, payment, total_amount);
         const set_order_data = set_order.rows[0];
 
         const invoice = await createInvoice(set_order_data.orders_id, total_amount, payment_method);
 
         await update_xendit(invoice.id, set_order_data.orders_id);
 
-        return res.json({ invoice_url: invoice.invoice_url });
+        return res.json({ invoice_url: invoice.invoice_url, success: true });
 
     } catch(err){
         console.log(err);
