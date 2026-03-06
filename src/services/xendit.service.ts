@@ -8,8 +8,8 @@ export const createInvoice = async (orderId: number, amount: number, payment_met
             amount: amount,
             description: "Coffee Shop Order",
             payment_methods: [payment_method],
-            success_redirect_url: "https://yourfrontend.vercel.app/home",
-            failure_redirect_url: "https://yourfrontend.vercel.app/coffee/coffees"
+            success_redirect_url: "https://yes-park-cafe-frontend.vercel.app/home",
+            failure_redirect_url: "https://yes-park-cafe-frontend.vercel.app/coffee/coffees"
         },
         {
             auth: {
