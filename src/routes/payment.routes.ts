@@ -5,6 +5,6 @@ import { authenticated } from "../middlewares/authorization.middlewares";
 const paymentRouter = express.Router();
 
 paymentRouter.post("/create-payment", authenticated, createPayment);
-paymentRouter.post("/webhook", authenticated, xenditWebhook);
+paymentRouter.post("/webhook", xenditWebhook);
 
 export default paymentRouter;
