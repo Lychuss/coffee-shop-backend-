@@ -1,9 +1,11 @@
 import type { Request, Response } from "express";
-import type { CartItem } from "../models/cart.interface";
+import type { CartItem } from "../interface/cart.interface";
 import { returnPayload } from "../services/token.service";
-import { add_cart_items, get_total_items, display_products_cart, display_product_bills } from "../repository/addcart.repository";
+import { add_cart_items, get_total_items, display_products_cart, 
+    display_product_bills, update_product_bills
+} from "../repository/addcart.repository";
 import { v4 as uuidv4 } from "uuid";
-import type { User } from "../models/user.interface";
+import type { User } from "../interface/user.interface";
 
 export const add_cart = async (req: Request, res: Response) => {
     const cart_items_id = uuidv4();
@@ -13,6 +15,7 @@ export const add_cart = async (req: Request, res: Response) => {
     const payLoad: User | null = returnPayload(token);
     console.log(cartItem);
 
+    if(cartItem.quantity === 0) return res.status(404).json({ message: 'You must have a quantity not less than 0!', success: false }); 
     if(payLoad === null) return res.status(404).json({ message: 'Invalid cart id no value!', success: false});
 
     try {
@@ -57,5 +60,24 @@ export const display_bills = async (req: Request, res: Response) => {
     } catch(err) {
         console.log(err);
         return res.status(500).json({ message: 'Internal server error!', success: false });
+    }
+}
+
+export const update_bills = async (req: Request, res: Response) => {
+    const token = req.cookies.token;
+    const payLoad: User | null = returnPayload(token);
+    const { method, name } = req.params as {
+        method: "add" | "minus";
+        name: string;
+    };
+
+    if(!token || !payLoad || !method || !name ) return res.status(404).json({ message: 'Invalid token! must have a token or invalid params', success: false });
+
+    try {
+        await update_product_bills(payLoad.userId, method, name);
+        return res.status(200).json({ message: 'Update successfully!', success: true });
+    } catch(err) {
+        console.log(err);
+         return res.status(500).json({ message: 'Internal Server Error!', success: false });
     }
 }

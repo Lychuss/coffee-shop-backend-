@@ -5,6 +5,7 @@ import cors from "cors";
 import productRouter from "./routes/products.routes";
 import pageRouter from "./routes/page.routes";
 import cartRouter from "./routes/addcart.routes";
+import paymentRouter from "./routes/payment.routes";
 
 const app = express();
 
@@ -14,7 +15,19 @@ const allowedOrigins = [
 ].filter(Boolean) as string[];
 
 app.use(cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+        const allowedOrigins = [
+            process.env.FRONTEND_URL,
+            "https://yes-park-cafe-frontend.vercel.app",
+            "http://localhost:3000"
+        ];
+
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true
 }));
 
@@ -29,6 +42,7 @@ app.get("/health", (req: Request, res: Response) => {
 app.use("/yespark", productRouter);
 app.use("/yespark", pageRouter);
 app.use("/yespark", cartRouter);
+app.use("/yespark", paymentRouter);
 
 const PORT = process.env.PORT || 5000;
 
