@@ -14,7 +14,8 @@ export const create_cart = async (cart_id: string, user_id: string) => {
 
 export const get_cart_id = async (user_id: string) => {
     return pool.query(
-        'SELECT carts.id FROM carts WHERE user_id = $1',
+        'SELECT carts.carts_id FROM carts WHERE user_id = $1',
         [user_id]
     );
 }
+

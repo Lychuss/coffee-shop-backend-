@@ -5,6 +5,7 @@ import cors from "cors";
 import productRouter from "./routes/products.routes";
 import pageRouter from "./routes/page.routes";
 import cartRouter from "./routes/addcart.routes";
+import paymentRouter from "./routes/payment.routes";
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.get("/health", (req: Request, res: Response) => {
 app.use("/yespark", productRouter);
 app.use("/yespark", pageRouter);
 app.use("/yespark", cartRouter);
+app.use("/yespark", paymentRouter);
 
 const PORT = process.env.PORT || 5000;
 
